@@ -1,41 +1,56 @@
 # ==========================
-# API
+# Python
 # ==========================
-fastapi==0.128.6
-uvicorn==0.40.0
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+# Virtual environments
+.venv/
+venv/
+env/
 
 # ==========================
-# Configuration
+# Environment variables
 # ==========================
-pydantic==2.12.5
-pydantic-settings==2.12.0
-python-dotenv==1.2.1
+.env
+.env.*
 
 # ==========================
-# RAG Core
+# IDE
 # ==========================
-langchain==1.2.9
-langchain-community==0.4.1
-chromadb==1.5.0
+.vscode/
+.idea/
 
 # ==========================
-# LLM
+# OS
 # ==========================
-ollama==0.6.1
+.DS_Store
+Thumbs.db
 
 # ==========================
-# Embeddings
+# Logs
 # ==========================
-sentence-transformers==5.2.2
-transformers==5.1.0
-torch==2.10.0
+*.log
+logs/
 
 # ==========================
-# Utilities
+# Data
 # ==========================
-tqdm==4.67.3
+data/vectorstore/
+data/*.sqlite3
+data/*.db
 
 # ==========================
 # Testing
 # ==========================
-pytest==9.0.2
+.coverage
+htmlcov/
+.pytest_cache/
+
+# ==========================
+# Docker
+# ==========================
+*.tar

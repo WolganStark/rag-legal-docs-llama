@@ -54,3 +54,10 @@ htmlcov/
 # Docker
 # ==========================
 *.tar
+
+# ==========================
+# Data
+# ==========================
+# Ignore Google Privacy Policy (copyrighted corporate document)
+data/raw/google_privacy_policy.pdf
+data/processed/

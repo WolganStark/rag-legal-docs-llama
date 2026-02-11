@@ -1,4 +1,3 @@
-import os
 from typing import List
 from sentence_transformers import SentenceTransformer
 from app.config.settings import settings
@@ -8,8 +7,8 @@ from app.config.settings import settings
 
 class EmbeddingService:
     def __init__(self):
-        self.provider = os.getenv("EMBEDDING_PROVIDER")
-        self.model_name = os.getenv("EMBEDDING_MODEL")
+        self.provider = settings.embedding_provider
+        self.model_name = settings.embedding_model
 
         if not self.provider:
             raise RuntimeError("EMBEDDING_PROVIDER not set in .env")
@@ -51,7 +50,7 @@ if __name__ == "__main__":
         "This document describes GDPR regulations."
     ]
 
-    embeddings = service.embed_texts(texts)
+    embeddings = service.embed_documents(texts)
 
     print(f"Number of embeddings: {len(embeddings)}")
     print(f"Embedding dimension: {len(embeddings[0])}")

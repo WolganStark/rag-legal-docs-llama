@@ -1,6 +1,5 @@
-# app/rag/chroma_client.py
+# app/vector_store/chroma_client.py
 
-import os
 import chromadb
 from chromadb.config import Settings
 from app.config.settings import settings

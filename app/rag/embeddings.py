@@ -27,7 +27,7 @@ class EmbeddingService:
 
         print("[EmbeddingService] Model loaded successfully")
 
-    def embed_texts(self, texts: List[str]) -> List[List[float]]:
+    def embed_documents(self, texts: List[str]) -> List[List[float]]:
         return self.model.encode(
             texts,
             show_progress_bar=True,

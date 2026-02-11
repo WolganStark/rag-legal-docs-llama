@@ -15,11 +15,8 @@ class ChromaClient:
         if not persist_path:
             raise RuntimeError("VECTOR_DB_PATH not set in .env")
 
-        self.client = chromadb.Client(
-            Settings(
-                persist_directory=persist_path,
-                anonymized_telemetry=False
-            )
+        self.client = chromadb.PersistentClient(
+            path=persist_path
         )
 
     def get_or_create_collection(self, name: str):

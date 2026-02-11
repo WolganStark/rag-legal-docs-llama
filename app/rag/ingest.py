@@ -8,6 +8,7 @@ Responsabilidades:
 - Aplicar chunking
 - Enriquecer metadata
 """
+from typing import List
 
 from pathlib import Path
 from langchain_community.document_loaders import PyMuPDFLoader
@@ -48,10 +49,10 @@ def detect_metadata(filename: str) -> dict:
     }
 
 
-def load_all_pdfs() -> list[Document]:
+def load_all_pdfs(data_dir: Path) -> List[Document]:
     documents = []
 
-    for pdf_path in DATA_DIR.glob("*.pdf"):
+    for pdf_path in data_dir.glob("*.pdf"):
         try:
             loader = PyMuPDFLoader(str(pdf_path))
             docs = loader.load()

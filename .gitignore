@@ -39,7 +39,7 @@ logs/
 # ==========================
 # Data
 # ==========================
-data/vectorstore/
+data/vector_index/
 data/*.sqlite3
 data/*.db
 

@@ -1,16 +1,15 @@
 # app/rag/chroma_client.py
 
 import os
-from dotenv import load_dotenv
 import chromadb
 from chromadb.config import Settings
+from app.config.settings import settings
 
-load_dotenv()
 
 
 class ChromaClient:
     def __init__(self):
-        persist_path = os.getenv("VECTOR_DB_PATH")
+        persist_path = settings.vector_db_path
 
         if not persist_path:
             raise RuntimeError("VECTOR_DB_PATH not set in .env")

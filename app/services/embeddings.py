@@ -1,10 +1,9 @@
 import os
 from typing import List
-from dotenv import load_dotenv
 from sentence_transformers import SentenceTransformer
+from app.config.settings import settings
 
 
-load_dotenv()
 
 
 class EmbeddingService:

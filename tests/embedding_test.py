@@ -1,4 +1,4 @@
-from app.rag.embeddings import EmbeddingService
+from app.services.embeddings import EmbeddingService
 
 
 def test_embedding_service():

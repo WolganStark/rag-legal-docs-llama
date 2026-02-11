@@ -1,4 +1,4 @@
-from app.rag.ingest import load_all_pdfs
+from app.ingest.ingest import load_all_pdfs
 from langchain_core.documents import Document
 
 

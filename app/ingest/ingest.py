@@ -16,6 +16,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_core.documents import Document
 
 
+
 DATA_DIR = Path("data/raw_documents")
 
 def detect_metadata(filename: str) -> dict:

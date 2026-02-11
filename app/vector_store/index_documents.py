@@ -5,12 +5,11 @@ from pathlib import Path
 
 from langchain_core.documents import Document
 
-from app.rag.ingest import load_all_pdfs
-from app.rag.chroma_client import ChromaClient
-from app.rag.embeddings import EmbeddingService
-from app.config import CHROMA_COLLECTION
+from app.ingest.ingest import load_all_pdfs
+from app.vector_store.chroma_client import ChromaClient
+from app.services.embeddings import EmbeddingService
+from app.config.settings import settings
 
-rebuild = os.getenv("REBUILD_INDEX", "false").lower() == "true"
 
 
 def index_documents(
@@ -28,7 +27,7 @@ def index_documents(
 
     print(f"✅ Loaded {len(documents)} chunks.")
 
-    collection = chroma_client.get_or_create_collection(CHROMA_COLLECTION)
+    collection = chroma_client.get_or_create_collection(settings.chroma_collection)
 
     print("🧠 Generating embeddings...")
     embeddings = embedding_service.embed_documents(
@@ -55,11 +54,11 @@ if __name__ == "__main__":
 
     rebuild = os.getenv("REBUILD_INDEX", "false").lower() == "true"
 
-    if rebuild:
+    if settings.rebuild_index:
         print("🧹 Rebuilding index...")
         try:
-            chroma_client.client.delete_collection(CHROMA_COLLECTION)
-        except:
+            chroma_client.client.delete_collection(settings.chroma_collection)
+        except Exception:
             pass
 
     index_documents(Path("data/raw_documents/legal"), embedding_service, chroma_client)

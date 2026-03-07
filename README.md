@@ -1,12 +1,13 @@
-# RAG Legal Docs (Llama + Chroma + FastAPI)
+# RAG Legal Docs (Llama + Groq + Chroma + FastAPI + Streamlit)
 
 Este repositorio implementa una base de **RAG (Retrieval-Augmented Generation)** para consultar documentos legales en PDF (laborales, privacidad, GDPR, etc.) usando:
 
 - **Ingesta y chunking** con LangChain.
 - **Embeddings** con Sentence Transformers.
 - **Vector store** local con ChromaDB.
-- **Generación** con Ollama.
+- **Generación** con **Groq** usando el modelo **`llama-3.3-70b-versatile`**.
 - **Orquestación** con un pipeline sencillo (`RAGPipeline`).
+- **Frontend** construido con **Streamlit**.
 
 ---
 
@@ -32,7 +33,7 @@ Este repositorio implementa una base de **RAG (Retrieval-Augmented Generation)**
   - Consulta Chroma con embeddings de query y retorna `top_k` documentos con score.
 
 - `app/services/generator.py`
-  - Llama a Ollama (`/api/chat`) y devuelve la respuesta final.
+  - Llama a Groq y devuelve la respuesta final usando `llama-3.3-70b-versatile`.
 
 - `app/core/rag_pipeline.py`
   - Flujo end-to-end: retrieve -> prompt -> generate.
@@ -110,7 +111,7 @@ curl -X POST http://localhost:8000/api/v1/ask \
 ## Requisitos
 
 - Python 3.11+
-- Ollama ejecutándose localmente
+- API Key de Groq
 - Dependencias del proyecto
 
 ### Instalar dependencias
@@ -129,10 +130,10 @@ APP_NAME=RAG Legal API
 ENVIRONMENT=local
 LOG_LEVEL=INFO
 
-# LLM (Ollama)
-LLM_PROVIDER=ollama
-OLLAMA_BASE_URL=http://localhost:11434
-OLLAMA_MODEL=llama3.1
+# LLM (Groq)
+LLM_PROVIDER=groq
+GROQ_API_KEY=tu_api_key_de_groq
+GROQ_MODEL=llama-3.3-70b-versatile
 
 # Embeddings
 EMBEDDING_PROVIDER=huggingface
@@ -177,6 +178,12 @@ Docs automáticas:
 - Swagger UI: `http://localhost:8000/docs`
 - ReDoc: `http://localhost:8000/redoc`
 
+### Ejecutar frontend Streamlit
+
+```bash
+streamlit run app/frontend/streamlit_app.py
+```
+
 ---
 
 ## 4) Próximos pasos recomendados
@@ -193,4 +200,5 @@ Docs automáticas:
 
 - ✅ Pipeline RAG funcional en modo script.
 - ✅ API FastAPI mínima para pruebas locales.
+- ✅ Frontend en Streamlit para interacción del usuario.
 - 🔜 Falta robustecer tests, manejo de errores y estrategia de despliegue.

@@ -70,6 +70,36 @@ st.markdown("""
             margin-top: -0.8rem;
             margin-bottom: 2rem;
         }
+        /* Overlay de carga centrado */
+        .loading-overlay {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem 0;
+            gap: 1rem;
+        }
+
+        /* Spinner circular clásico */
+        .spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid #EAE6DF;
+            border-top: 4px solid #2C3E50;
+            border-radius: 50%;
+            animation: spin 0.9s linear infinite;
+        }
+
+        @keyframes spin {
+            0%   { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: #7F8C8D;
+            font-size: 0.9rem;
+            font-family: 'Georgia', serif;
+        }
     </style>
 """, unsafe_allow_html=True)
 
@@ -89,7 +119,7 @@ def ask_api(query: str) -> dict:
     response = requests.post(
         f"{API_URL}/api/v1/ask",
         json={"query": query},  # El body que espera AskRequest en routes.py
-        timeout=60              # Espera máximo 60 segundos (el LLM puede tardar)
+        timeout=180             # Espera máximo 180 segundos (el LLM puede tardar)
     )
     response.raise_for_status()  # Lanza HTTPError si el status code es 4xx o 5xx
     return response.json()       # Retorna el dict con 'answer' y 'sources'
@@ -185,7 +215,6 @@ submitted = st.button("🔍 Consultar", use_container_width=True)
 # ── Lógica de consulta ─────────────────────────────────────────────────────────
 # Solo ejecuta si el usuario hizo clic en el botón
 if submitted:
-
     # Validación básica: no enviar si el campo está vacío o tiene menos de 3 chars
     if not query or len(query.strip()) < 3:
         # st.warning muestra un mensaje amarillo de advertencia
@@ -193,54 +222,59 @@ if submitted:
     else:
         # st.spinner muestra un indicador de carga mientras ejecuta el bloque
         # El texto dentro aparece junto al spinner
-        with st.spinner("Consultando documentos legales..."):
-            try:
-                # Llama a la API con la pregunta del usuario
-                result = ask_api(query.strip())
+        with st.spinner("Consultando documentos legales..."):            
+            if submitted:
+                if not query or len(query.strip()) < 3:
+                    st.warning("Por favor escribe una consulta de al menos 3 caracteres.")
+                else:
+                    # Muestra el spinner HTML centrado en lugar del nativo de Streamlit
+                    loading_placeholder = st.empty()
+                    loading_placeholder.markdown("""
+                        <div class="loading-overlay">
+                            <div class="spinner"></div>
+                            <p class="loading-text">Consultando documentos legales...</p>
+                        </div>
+                    """, unsafe_allow_html=True)
 
-                # ── Mostrar respuesta ──────────────────────────────────────────
-                st.subheader("📋 Respuesta")
+                    try:
+                        result = ask_api(query.strip())
 
-                # Inyecta la respuesta dentro del div estilizado con CSS
-                st.markdown(
-                    f'<div class="answer-box">{result["answer"]}</div>',
-                    unsafe_allow_html=True
-                )
+                        # Limpia el spinner una vez llega la respuesta
+                        loading_placeholder.empty()
 
-                # ── Mostrar fuentes ────────────────────────────────────────────
-                sources = result.get("sources", [])  # Lista de SourceItem
+                        # ── Mostrar respuesta ──────────────────────────────────────────
+                        st.subheader("📋 Respuesta")
+                        st.markdown(
+                            f'<div class="answer-box">{result["answer"]}</div>',
+                            unsafe_allow_html=True
+                        )
 
-                if sources:
-                    st.subheader("📎 Fuentes consultadas")
+                        # ── Mostrar fuentes ────────────────────────────────────────────
+                        sources = result.get("sources", [])
+                        if sources:
+                            st.subheader("📎 Fuentes consultadas")
+                            chips_html = ""
+                            for source in sources:
+                                source_name = source.get("source", "Desconocido")
+                                file_name = os.path.basename(source_name)
+                                score = source.get("score")
+                                score_text = f" ({score:.2f})" if score is not None else ""
+                                chips_html += f'<span class="source-chip">📄 {file_name}{score_text}</span>'
+                            st.markdown(chips_html, unsafe_allow_html=True)
 
-                    # Construye los chips de fuentes como HTML
-                    chips_html = ""
-                    for source in sources:
-                        # Extrae solo el nombre del archivo, no la ruta completa
-                        source_name = source.get("source", "Desconocido")
-                        file_name = os.path.basename(source_name)  # Ej: ley_laboral.pdf
-                        score = source.get("score")
+                    except requests.exceptions.ConnectionError:
+                        loading_placeholder.empty()
+                        st.error("❌ No se pudo conectar con la API.")
 
-                        # Si hay score de similitud, lo muestra con 2 decimales
-                        score_text = f" ({score:.2f})" if score is not None else ""
-                        chips_html += f'<span class="source-chip">📄 {file_name}{score_text}</span>'
+                    except requests.exceptions.Timeout:
+                        loading_placeholder.empty()
+                        st.error("⏱️ La consulta tardó demasiado. Intenta con una pregunta más corta.")
 
-                    st.markdown(chips_html, unsafe_allow_html=True)
+                    except requests.exceptions.HTTPError as e:
+                        loading_placeholder.empty()
+                        st.error(f"❌ Error de la API: {e.response.status_code} - "
+                                f"{e.response.json().get('detail', 'Error desconocido')}")
 
-            except requests.exceptions.ConnectionError:
-                # Error específico cuando la API no está corriendo
-                st.error("❌ No se pudo conectar con la API. ¿Está corriendo el servidor en "
-                         f"`{API_URL}`?")
-
-            except requests.exceptions.Timeout:
-                # Error cuando el servidor tarda más de 60 segundos
-                st.error("⏱️ La consulta tardó demasiado. Intenta con una pregunta más corta.")
-
-            except requests.exceptions.HTTPError as e:
-                # Error cuando la API retorna un status 4xx o 5xx
-                st.error(f"❌ Error de la API: {e.response.status_code} - "
-                         f"{e.response.json().get('detail', 'Error desconocido')}")
-
-            except Exception as e:
-                # Captura cualquier otro error inesperado
-                st.error(f"❌ Error inesperado: {str(e)}")
+                    except Exception as e:
+                        loading_placeholder.empty()
+                        st.error(f"❌ Error inesperado: {str(e)}")

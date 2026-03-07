@@ -34,7 +34,7 @@ class Settings(BaseSettings):
     rebuild_index: bool = False
 
     # HuggingFace Hub
-    huggingface_token: str | None = None
+    hf_token: str | None = None
 
     class Config:
         env_file = ".env"

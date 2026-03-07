@@ -1,33 +1,22 @@
 # app/services/generator.py
 
-import requests
+from groq import Groq
 from app.config.settings import settings
 
 
-class OllamaGenerator:
+class GroqGenerator:
 
     def __init__(self):
-        self.base_url = settings.ollama_base_url
-        self.model = settings.ollama_model
+        self.client = Groq(api_key=settings.groq_api_key)
+        self.model = settings.groq_model
 
     def generate(self, messages: list) -> str:
         """
-        Sends structured chat messages to Ollama.
+        Sends structured chat messages to Groq Cloud.
         """
+        response = self.client.chat.completions.create(
+            model=self.model,
+            messages=messages
+        )
 
-        url = f"{self.base_url}/api/chat"
-
-        payload = {
-            "model": self.model,
-            "messages": messages,
-            "stream": False
-        }
-
-        response = requests.post(url, json=payload)
-
-        if response.status_code != 200:
-            raise RuntimeError(
-                f"Ollama error: {response.status_code} - {response.text}"
-            )
-
-        return response.json()["message"]["content"].strip()
+        return response.choices[0].message.content.strip()

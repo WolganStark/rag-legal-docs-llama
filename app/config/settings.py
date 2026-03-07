@@ -11,8 +11,8 @@ class Settings(BaseSettings):
 
     # LLM
     llm_provider: str
-    ollama_base_url: str
-    ollama_model: str
+    groq_api_key: str
+    groq_model: str
 
     # Embeddings
     embedding_provider: str
@@ -30,8 +30,11 @@ class Settings(BaseSettings):
     # Device
     device: str
 
-    #Rebuild Index
+    # Rebuild Index
     rebuild_index: bool = False
+
+    # HuggingFace Hub
+    huggingface_token: str | None = None
 
     class Config:
         env_file = ".env"

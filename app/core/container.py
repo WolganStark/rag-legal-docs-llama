@@ -1,7 +1,7 @@
 from app.services.embeddings import EmbeddingService
 from app.vector_store.chroma_client import ChromaClient
 from app.services.retriever import RetrieverService
-from app.services.generator import OllamaGenerator
+from app.services.generator import GroqGenerator  
 from app.core.rag_pipeline import RAGPipeline
 
 
@@ -23,7 +23,7 @@ class Container:
                 top_k=3
             )
 
-            generator = OllamaGenerator()
+            generator = GroqGenerator() 
 
             cls._rag_instance = RAGPipeline(retriever, generator)
 

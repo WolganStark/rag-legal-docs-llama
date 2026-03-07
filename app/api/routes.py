@@ -7,7 +7,26 @@ router = APIRouter(prefix="/api/v1", tags=["rag"])
 
 
 class AskRequest(BaseModel):
-    query: str = Field(..., min_length=3, description="Natural language question")
+    query: str = Field(
+        ...,
+        min_length=3,
+        description="Natural language question",
+        example="¿Qué dice la ley colombiana sobre el trabajo nocturno?",
+        openapi_examples={
+            "laboral": {
+                "summary": "Consulta laboral",
+                "value": {"query": "¿Qué dice la ley colombiana sobre el trabajo nocturno?"},
+            },
+            "gdpr": {
+                "summary": "Consulta GDPR",
+                "value": {"query": "¿Cuáles son los derechos del titular de datos según el GDPR?"},
+            },
+            "despido": {
+                "summary": "Despido injustificado",
+                "value": {"query": "¿Qué indemnización corresponde por despido sin justa causa?"},
+            },
+        },
+    )
 
 
 class SourceItem(BaseModel):

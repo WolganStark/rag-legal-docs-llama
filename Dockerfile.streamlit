@@ -8,8 +8,8 @@ WORKDIR /app
 
 # Solo instala las dependencias que necesita Streamlit
 # No necesita torch, chromadb, groq, etc.
-COPY requirements.streamlit.txt .
-RUN pip install --no-cache-dir -r requirements.streamlit.txt
+COPY frontend/requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copia solo la carpeta del frontend, no todo el proyecto
 COPY frontend/ ./frontend/

@@ -1,0 +1,22 @@
+# Misma base que la API para consistencia
+FROM python:3.11-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+WORKDIR /app
+
+# Solo instala las dependencias que necesita Streamlit
+# No necesita torch, chromadb, groq, etc.
+COPY requirements.streamlit.txt .
+RUN pip install --no-cache-dir -r requirements.streamlit.txt
+
+# Copia solo la carpeta del frontend, no todo el proyecto
+COPY frontend/ ./frontend/
+
+EXPOSE 8501
+
+# El flag server.address=0.0.0.0 es obligatorio en Docker
+# Sin él Streamlit solo escucha en localhost dentro del contenedor
+# y no es accesible desde fuera
+CMD ["streamlit", "run", "frontend/app.py", "--server.port=8501", "--server.address=0.0.0.0"]

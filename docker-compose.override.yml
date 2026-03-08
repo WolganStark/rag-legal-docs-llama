@@ -1,0 +1,13 @@
+services:
+  api:
+    env_file:
+      - .env
+
+  frontend:
+    env_file:
+      - .env
+    environment:
+      # Sobreescribe API_URL para usar la red interna de Docker
+      # En Docker, "localhost" dentro del contenedor de Streamlit
+      # no es tu máquina — es el propio contenedor de Streamlit
+      API_URL: http://api:8000

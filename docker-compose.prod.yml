@@ -1,0 +1,31 @@
+# docker-compose.prod.yml
+# Se usa en AWS con:
+# docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+
+services:
+
+  api:
+    image: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/rag-api:latest
+    environment:
+      - APP_NAME=${APP_NAME}
+      - ENVIRONMENT=production
+      - LOG_LEVEL=INFO
+      - LLM_PROVIDER=groq
+      - GROQ_API_KEY=${GROQ_API_KEY}
+      - GROQ_MODEL=${GROQ_MODEL}
+      - EMBEDDING_PROVIDER=huggingface
+      - EMBEDDING_MODEL=${EMBEDDING_MODEL}
+      - HF_TOKEN=${HF_TOKEN}
+      - VECTOR_DB=chroma
+      - VECTOR_DB_PATH=/app/data/processed/vector_index
+      - CHROMA_COLLECTION=${CHROMA_COLLECTION}
+      - CHUNK_SIZE=${CHUNK_SIZE}
+      - CHUNK_OVERLAP=${CHUNK_OVERLAP}
+      - DEVICE=cpu
+      - REBUILD_INDEX=false
+
+  frontend:
+    image: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/rag-frontend:latest
+    environment:
+      - API_URL=http://api:8000
+      - DOCS_PATH=/app/data/raw_documents

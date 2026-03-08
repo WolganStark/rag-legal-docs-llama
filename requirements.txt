@@ -45,8 +45,3 @@ pytest==9.0.2
 # HuggingFace Hub
 # ==========================
 huggingface_hub==1.4.1
-
-# ==========================
-# Frontend Streamlit
-# ==========================
-streamlit==1.55.0

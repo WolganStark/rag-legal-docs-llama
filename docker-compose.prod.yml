@@ -23,6 +23,8 @@ services:
       - CHUNK_OVERLAP=${CHUNK_OVERLAP}
       - DEVICE=cpu
       - REBUILD_INDEX=false
+      - S3_BUCKET=${S3_BUCKET}
+      - S3_PREFIX=${S3_PREFIX}
 
   frontend:
     image: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/rag-frontend:latest

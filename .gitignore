@@ -61,3 +61,9 @@ htmlcov/
 # Ignore Google Privacy Policy (copyrighted corporate document)
 data/raw_documents/google_privacy_policy.pdf
 data/processed/
+
+# ==========================
+# EXCEL Evaluación
+# ==========================
+# Ignore Excel files for evaluation results (it will be a PDF generated for definitive results)
+*.xlsx
